@@ -9,13 +9,7 @@ int main() {
     createList(linkedlist);
     addNode(linkedlist, 3);
     addNode(linkedlist, 4);
-    addNode(linkedlist, 5);
-    addNode(linkedlist, 6);
-    addNode(linkedlist, 7);
-    addNode(linkedlist, 8);
-    addNode(linkedlist, 9);
     deleteList(linkedlist);
-    
     return 0;
 }
 
@@ -76,6 +70,12 @@ _Bool addNode(LinkedList* linkedlist, int number) {
     // 새로 할당할 노드 동적 할당    
     struct Data* newNode = (struct Data*)malloc(sizeof(Data));
 
+    // newNode 할당 실패 시
+    if(newNode == NULL) {
+        printf("새로운 노드 할당 실패\n");
+        return FALSE;
+    }
+
     // 입력받은 데이터를 새로운 노드의 데이터에 대입
     newNode->number = number;
 
@@ -83,8 +83,10 @@ _Bool addNode(LinkedList* linkedlist, int number) {
     if(linkedlist->head->next == NULL) {
         // head 다음 노드로 newNode를 가리키게 하기
         linkedlist->head->next = newNode;
+
         // newNode의 다음 노드는 tail(마지막) 노드
         newNode->next = linkedlist->tail;
+
         // 마지막 노드 다음은 NULL
         linkedlist->tail->next = NULL;
         printf("새로운 노드 연결 완료\n");
@@ -92,7 +94,7 @@ _Bool addNode(LinkedList* linkedlist, int number) {
     // 1개 이상의 기존 데이터 노드가 존재한다면
     else {
         // 현재 노드의 next가 tail을 가리키기 전까지 반복
-        while(linkedlist->current->next != NULL) {
+        while(linkedlist->current->next->next != NULL) {
             linkedlist->current = linkedlist->current->next;
         }
 
@@ -106,7 +108,24 @@ _Bool addNode(LinkedList* linkedlist, int number) {
 }
 
 // 노드 제거
-_Bool removeNode(LinkedList* linkedlist, int number);
+_Bool removeNode(LinkedList* linkedlist, int number) {
+    
+}
 
 // 노드 탐색
-LinkedList* searchNode(LinkedList* linkedlist, int number);
+Data* searchNode(LinkedList* linkedlist, int number) {
+    // 현재 가리키는 노드 위치 초기화
+    linkedlist->current = linkedlist->head;
+
+    // 찾는 데이터가 있는지 마지지 노드까지 탐색
+    while(linkedlist->current->next != NULL) {
+        //
+        if(linkedlist->current->number == number) {
+            printf("%d : 찾고자 하는 데이터가 존재합니다.\n", linkedlist->current->number);
+            return linkedlist->current;
+        }
+        linkedlist->current = linkedlist->current->next;
+    }
+    printf("찾고자 하는 데이터가 없습니다.\n");
+    return NULL;
+}

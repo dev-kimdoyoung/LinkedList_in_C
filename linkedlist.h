@@ -25,5 +25,5 @@ _Bool addNode(LinkedList* linkedlist, int number);
 _Bool removeNode(LinkedList* linkedlist, int number);
 
 // 노드 탐색
-LinkedList* searchNode(LinkedList* linkedlist, int number);
+Data* searchNode(LinkedList* linkedlist, int number);
 #endif

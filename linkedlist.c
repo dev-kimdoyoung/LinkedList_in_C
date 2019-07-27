@@ -7,8 +7,14 @@
 int main() {
     LinkedList* linkedlist = (LinkedList*)malloc(sizeof(LinkedList));
     createList(linkedlist);
-    addNode(linkedlist, 3);
-    addNode(linkedlist, 4);
+    for(int i = 0; i < 100; i++) {
+        addNode(linkedlist, i);
+        searchNode(linkedlist, i);
+    }
+    for(int i = 0; i < 100; i++) {
+        removeNode(linkedlist, i);
+        searchNode(linkedlist, i);
+    }
     deleteList(linkedlist);
     return 0;
 }
@@ -89,7 +95,6 @@ _Bool addNode(LinkedList* linkedlist, int number) {
 
         // 마지막 노드 다음은 NULL
         linkedlist->tail->next = NULL;
-        printf("새로운 노드 연결 완료\n");
     }
     // 1개 이상의 기존 데이터 노드가 존재한다면
     else {
@@ -103,13 +108,55 @@ _Bool addNode(LinkedList* linkedlist, int number) {
         // 기존에 tail을 가리키던 노드가 newNode를 가리키게 하기
         linkedlist->current->next = newNode;
     }
-    printf("새로운 노드 연결 완료\n");
+    printf("데이터 추가 완료\n");
     return TRUE;
 }
 
 // 노드 제거
 _Bool removeNode(LinkedList* linkedlist, int number) {
-    
+    // 현재 가리키는 노드 위치 초기화
+    linkedlist->current = linkedlist->head;
+
+    struct Data* node = (struct Data*)malloc(sizeof(Data));
+
+    // 메모리 할당을 실패하면
+    if(node == NULL) {
+        printf("임시 노드 메모리 할당 실패\n");
+        return FALSE;
+    }
+
+    // 현재 노드보다 2개 앞의 노드가 NULL이 아니면 반복
+    while(linkedlist->current->next->next != NULL) {
+        // 만약 삭제할 노드를 찾으면
+        if(linkedlist->current->next->number == number) {
+            // node에 삭제할 데이터 노드 위치를 저장
+            node = linkedlist->current->next;
+
+            // 현재 노드가 찾는 데이터 노드의 다음 노드를 가리키게 하기
+            linkedlist->current->next = linkedlist->current->next->next;
+            
+            // 현재 노드에 삭제에 노드 저장
+            linkedlist->current = node;
+
+            printf("데이터값 %d 삭제\n", linkedlist->current->number);
+            // 삭제할 노드 메모리 반환
+            linkedlist->current->next = NULL;
+            memset(linkedlist->current, 0xFF, sizeof(Data));
+            free(linkedlist->current);
+            linkedlist->current = NULL;
+
+            // 임시 노드 메모리 반환
+            memset(node, 0xFF, sizeof(node));
+            free(node);
+            node = NULL;
+            return TRUE;
+        }
+        // 현재 노드가 다음 노드를 가리키게 하기
+        linkedlist->current = linkedlist->current->next;
+    }
+    // 삭제하려는 데이터가 존재하지면않으면
+    printf("삭제하려는 데이터가 존재하지 않습니다\n");
+    return FALSE;
 }
 
 // 노드 탐색
@@ -121,7 +168,7 @@ Data* searchNode(LinkedList* linkedlist, int number) {
     while(linkedlist->current->next != NULL) {
         //
         if(linkedlist->current->number == number) {
-            printf("%d : 찾고자 하는 데이터가 존재합니다.\n", linkedlist->current->number);
+            printf("데이터 %d가 존재합니다.\n", linkedlist->current->number);
             return linkedlist->current;
         }
         linkedlist->current = linkedlist->current->next;
